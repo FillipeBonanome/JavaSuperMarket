@@ -13,4 +13,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     boolean existsByCode(@NotNull(message = "Product code must not be null") Long code);
     boolean existsByName(@NotBlank(message = "Product name must not be null") String name);
     Optional<Product> findByCode(Long id);
+    Object getReferenceByCode(Long id);
 }

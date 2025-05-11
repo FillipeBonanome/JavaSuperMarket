@@ -1,6 +1,7 @@
 package com.supermaket.marketapi.dtos;
 
 import com.supermaket.marketapi.UnitType;
+import com.supermaket.marketapi.entity.Product;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -16,4 +17,7 @@ public record ProductDTO(
         @NotNull(message = "Product tax percent must not be null")
         Float taxPercent
 ) {
+        public ProductDTO(Product product) {
+                this(product.getName(), product.getCode(), product.getUnitPrice(), product.getUnitType(), product.getTaxPercent());
+        }
 }

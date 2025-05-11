@@ -22,7 +22,7 @@ public class ProductController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<String> registerProduct(@Valid @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<?> registerProduct(@Valid @RequestBody ProductDTO productDTO) {
         if (productRepository.existsByCode(productDTO.code())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Code already registered");
         }
@@ -34,7 +34,7 @@ public class ProductController {
         Product product = new Product(productDTO);
         productRepository.save(product);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Products registered");
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ProductDTO(product));
     }
 
     @GetMapping("/{id}")
@@ -51,12 +51,12 @@ public class ProductController {
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<?> editProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO productDTO) {
-        Optional<Product> product = productRepository.findById(id);
+        Optional<Product> product = productRepository.findByCode(id);
         if (product.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
         }
 
-        var proxy = productRepository.getReferenceById(id);
+        Product proxy = productRepository.getReferenceById(product.get().getId());
         proxy.updateProduct(productDTO);
         return ResponseEntity.ok().body(proxy);
     }
