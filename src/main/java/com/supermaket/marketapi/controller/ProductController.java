@@ -2,6 +2,7 @@ package com.supermaket.marketapi.controller;
 
 import com.supermaket.marketapi.dtos.ProductDTO;
 import com.supermaket.marketapi.entity.Product;
+import com.supermaket.marketapi.exception.ProductException;
 import com.supermaket.marketapi.repository.ProductRepository;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
@@ -10,7 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -22,43 +26,45 @@ public class ProductController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<?> registerProduct(@Valid @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDTO> registerProduct(@Valid @RequestBody ProductDTO productDTO, UriComponentsBuilder uriBuilder) {
         if (productRepository.existsByCode(productDTO.code())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Code already registered");
+           throw new ProductException("Code already registered");
         }
 
         if (productRepository.existsByName(productDTO.name())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Name already registered");
+            throw new ProductException("Name already registered");
         }
 
         Product product = new Product(productDTO);
         productRepository.save(product);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ProductDTO(product));
+        URI uri = uriBuilder.path("/products/{id}").buildAndExpand(product.getCode()).toUri();
+
+        return ResponseEntity.created(uri).body(productDTO);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> readProduct(@PathVariable Long id) {
+    public ResponseEntity<ProductDTO> readProduct(@PathVariable Long id) {
         Optional<Product> product = productRepository.findByCode(id);
         if (product.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+            throw new ProductException("Product not found");
         }
 
         Product newProduct = product.get();
-        return ResponseEntity.status(HttpStatus.OK).body(newProduct);
+        return ResponseEntity.status(HttpStatus.OK).body(new ProductDTO(newProduct));
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> editProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDTO> editProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO productDTO) {
         Optional<Product> product = productRepository.findByCode(id);
         if (product.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+            throw new ProductException("Product not found");
         }
 
         Product proxy = productRepository.getReferenceById(product.get().getId());
         proxy.updateProduct(productDTO);
-        return ResponseEntity.ok().body(proxy);
+        return ResponseEntity.ok().body(new ProductDTO(proxy));
     }
 
 }
