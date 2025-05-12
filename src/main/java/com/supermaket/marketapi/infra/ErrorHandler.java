@@ -1,6 +1,7 @@
 package com.supermaket.marketapi.infra;
 
 import com.supermaket.marketapi.dtos.ErrorDTO;
+import com.supermaket.marketapi.exception.CartException;
 import com.supermaket.marketapi.exception.ProductException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,6 +17,11 @@ public class ErrorHandler {
     @ExceptionHandler(ProductException.class)
     public ResponseEntity<ErrorDTO> handleProductException(ProductException exception) {
         return ResponseEntity.badRequest().body(new ErrorDTO(ProductException.class.getSimpleName(), exception.getMessage()));
+    }
+
+    @ExceptionHandler(CartException.class)
+    public ResponseEntity<ErrorDTO> handleCartException(CartException exception) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(CartException.class.getSimpleName(), exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
