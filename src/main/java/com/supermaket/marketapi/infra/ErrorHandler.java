@@ -2,7 +2,6 @@ package com.supermaket.marketapi.infra;
 
 import com.supermaket.marketapi.dtos.ErrorDTO;
 import com.supermaket.marketapi.exception.ProductException;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
