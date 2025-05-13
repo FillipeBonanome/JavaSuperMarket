@@ -4,10 +4,9 @@ import com.supermaket.marketapi.entity.Payment;
 
 public record PaymentDTO(
         String name,
-        Double value,
         CartDTO cartDTO
 ) {
     public PaymentDTO(Payment payment) {
-        this(payment.getName(), payment.getValue(), new CartDTO(payment.getCart()));
+        this(payment.getName(), new CartDTO(payment.getCart()));
     }
 }

@@ -17,7 +17,6 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
-    Double value;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
@@ -25,7 +24,6 @@ public class Payment {
 
     public Payment(PaymentDTO paymentDTO) {
         this.name = paymentDTO.name();
-        this.value = paymentDTO.value();
         this.cart = new Cart(paymentDTO.cartDTO());
     }
 }
