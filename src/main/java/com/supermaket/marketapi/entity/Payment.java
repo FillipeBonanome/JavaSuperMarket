@@ -18,12 +18,7 @@ public class Payment {
     Long id;
     String name;
 
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    Cart cart;
-
     public Payment(PaymentDTO paymentDTO) {
         this.name = paymentDTO.name();
-        this.cart = new Cart(paymentDTO.cartDTO());
     }
 }

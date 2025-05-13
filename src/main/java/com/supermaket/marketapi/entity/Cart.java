@@ -2,6 +2,7 @@ package com.supermaket.marketapi.entity;
 
 import com.supermaket.marketapi.CartStatus;
 import com.supermaket.marketapi.dtos.CartDTO;
+import com.supermaket.marketapi.dtos.CartPaymentDTO;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -28,14 +29,14 @@ public class Cart {
 
     //@NotEmpty(message = "Your cart need at least one method of payment")
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
-    List<Payment> payments;
+    List<CartPayment> payments;
 
     @Enumerated(EnumType.STRING)
     CartStatus status;
 
     public Cart(@Valid CartDTO cartDTO) {
         this.cartItems = cartDTO.cartItemDTOList().stream().map(CartItem::new).toList();
-        this.payments = cartDTO.paymentDTOList().stream().map(Payment::new).toList();
+        this.payments = cartDTO.paymentDTOList().stream().map(CartPayment::new).toList();
         this.status = cartDTO.status();
     }
 }
